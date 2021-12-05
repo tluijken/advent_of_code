@@ -8,6 +8,13 @@ struct Vec2{
     y: i32,
 }
 
+impl Vec2 {
+    fn mutate(&mut self, x_mod: i32, y_mod: i32){
+        self.x += x_mod;
+        self.y += y_mod;
+    }
+}
+
 fn main() {
     let movements: Vec<Vec2> = BufReader::new(File::open("input").unwrap()).lines()
         .filter(|line| line.is_ok())
@@ -25,7 +32,14 @@ fn main() {
             Vec2{ x: 0, y: -val}    
         })
         .collect();
-    let x_movements: i32 = movements.iter().map(|vec| vec.x).into_iter().sum();
-    let y_movements: i32 = movements.iter().map(|vec| vec.y).into_iter().sum();
-    println!("Result = {}", x_movements * y_movements);
+
+    let mut aim = 0;
+    let mut pos = Vec2{x: 0, y: 0};
+
+    for cmd in movements {
+        aim += cmd.y;
+        pos.mutate(cmd.x, cmd.x * aim);
+    }
+
+    println!("Result = {}", pos.x * pos.y);
 }
