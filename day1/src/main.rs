@@ -23,8 +23,7 @@ fn part_1(depts: &[i32]) {
         }
     }
 
-    // -1, i.d.k....
-    println!("Increases = {}", nr_of_increases - 1);
+    println!("Increases = {}", nr_of_increases);
 }
 
 fn part_2(depts: &[i32]) {
