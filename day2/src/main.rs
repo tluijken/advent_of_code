@@ -33,6 +33,11 @@ fn main() {
         })
         .collect();
 
+    let x_movements: i32 = movements.iter().map(|vec| vec.x).into_iter().sum();
+    let y_movements: i32 = movements.iter().map(|vec| vec.y).into_iter().sum();
+    println!("Result part 1 = {}", x_movements * y_movements);
+
+
     let mut aim = 0;
     let mut pos = Vec2{x: 0, y: 0};
 
@@ -41,5 +46,5 @@ fn main() {
         pos.mutate(cmd.x, cmd.x * aim);
     }
 
-    println!("Result = {}", pos.x * pos.y);
+    println!("Result part 2 = {}", pos.x * pos.y);
 }
