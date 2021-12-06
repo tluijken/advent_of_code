@@ -9,20 +9,20 @@ fn main() {
         .collect();
 
     let record_count: u32 = data.iter().len() as u32;
-    let mut gamma: Vec<u16> = [].to_vec();
-    let mut epsilon: Vec<u16> = [].to_vec();
+    let mut gamma: Vec<u16> = Vec::new();
+    let mut epsilon: Vec<u16> = Vec::new();
     for index in 0..12 {
         let column_count:u32 = data.iter().map(|item| item[index]).filter(|item| item.gt(&0)).sum();
         if column_count > record_count / 2 { gamma.push(1);epsilon.push(0) } else { gamma.push(0);epsilon.push(1); }
     }
 
-    println!("Result step 1 = {}", convert(&gamma) as u32 * convert(&epsilon) as u32);
+    println!("Result step 1 = {}", convert(&gamma) * convert(&epsilon));
 }
 
 
-fn convert(bits: &[u16]) -> u16 {
+fn convert(bits: &[u16]) -> u32 {
     bits.iter().fold(0, |result, &bit| {
         (result << 1) ^ bit
-    })
+    }) as u32
 }
 
