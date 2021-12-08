@@ -32,7 +32,7 @@ fn main() {
     let mut winner_score: u32 = 0;
     for number in &numbers_drawn {
         for board in boards.iter_mut() {
-            board.mark_number(&number);
+            board.mark_number(number);
             if board.check_winner() {
                 winner_score = board.sum_unmarked();
                 winner = true;
@@ -40,7 +40,7 @@ fn main() {
             }
         }
         if winner {
-            last_drawn_number = &number;
+            last_drawn_number = number;
             break;
         }
     }
