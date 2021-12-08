@@ -21,16 +21,16 @@ fn main() {
             numbers.entry(y as u32).insert(values);
         }
         boards.push(Board{
-            numbers
+            numbers,
+            has_won: false
         });
     }
 
 
-    let mut winner = false;
-    
-    let mut last_drawn_number: u32 = 0;
+    let mut winner = false;   
+    let mut last_drawn_number: &u32 = &0;
     let mut winner_score: u32 = 0;
-    for number in numbers_drawn {
+    for number in &numbers_drawn {
         for board in boards.iter_mut() {
             board.mark_number(&number);
             if board.check_winner() {
@@ -40,24 +40,53 @@ fn main() {
             }
         }
         if winner {
-            last_drawn_number = number;
+            last_drawn_number = &number;
             break;
         }
     }
     
     println!("Result for step 1 : {}", winner_score * last_drawn_number);
+    
+    winner = false;   
+    winner_score = 0;
+    let number_of_cards:usize = boards.len();
+    let mut winning_cards:usize = 0;
+    for number in &numbers_drawn {
+        for board in boards.iter_mut() {
+            if board.has_won {
+                continue;
+            }
+            board.mark_number(number);
+            if board.check_winner() {
+                winning_cards += 1;
+                if winning_cards == number_of_cards - 1 {
+                    winner_score = board.sum_unmarked();
+                    winner = true;
+                    break;
+                }
+            }
+        }
+        if winner {
+            last_drawn_number = number;
+            break;
+        }
+    }
+    
+    println!("Result for step 2 : {}", winner_score * last_drawn_number);
 }
 
 struct Board {
     numbers: HashMap<u32, Vec<(u32, bool)>>,
+    has_won: bool,
 }
 
 
 impl Board{
-    fn check_winner(&self) -> bool {
+    fn check_winner(&mut self) -> bool {
         // Check horizontal
         for values in self.numbers.values() {
             if values.iter().all(|v| v.1) {
+                self.has_won = true;
                 return true;
             }
         }
@@ -65,6 +94,7 @@ impl Board{
         // check vertical
         for x in 0..5 {
             if self.numbers.iter().all(|(_, values)| values[x].1) {
+                self.has_won = true;
                 return true;
             }
         }
