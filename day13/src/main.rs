@@ -93,7 +93,7 @@ mod input {
             for y in 0..6 {
                 for x in 0..40 {
                     if result.iter().any(|r| r.x == x && r.y == y) {
-                        print!("\x1b[0;92m#\x1b[0m");
+                        print!("\x1b[0;92m#\x1b[0m"); //prints in green
                         //print!("#");
                     }
                     else {
