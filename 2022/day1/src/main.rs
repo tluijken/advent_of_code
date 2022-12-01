@@ -2,20 +2,16 @@ use std::collections::HashMap;
 
 pub fn part_1(input: &str) -> u32 {
     let result = get_sorted_weights(input);
-    match result.last() {
-        Some(max) => max.clone(),
+    match result.first() {
+        Some(max) => max.to_owned(),
         None => 0,
     }
 }
 
 pub fn part_2(input: &str) -> u32 {
-    let result: Vec<u32> = get_sorted_weights(input);
-    let index = result.len() - 3;
-    let last_weight: &u32 = &result[index..].iter().fold(0, |mut total, item| {
-        total += item;
-        total
-    });
-    last_weight.clone()
+    let result = get_sorted_weights(input);
+    let last_weight: &u32 = &result[..3].iter().fold(0, |total, item| item + total);
+    last_weight.to_owned()
 }
 
 fn get_sorted_weights(input: &str) -> Vec<u32> {
@@ -38,16 +34,19 @@ fn get_sorted_weights(input: &str) -> Vec<u32> {
             }
         })
         .values()
-        .map(|v| v.clone())
+        .map(|v| v.to_owned())
         .collect::<Vec<u32>>();
     result.sort();
+    result.reverse();
     result
 }
 
 fn main() {
     let input = std::fs::read_to_string("input").unwrap();
+
     let result = part_1(&input);
     println!("{}", result);
+
     let result = part_2(&input);
     println!("{}", result);
 }
