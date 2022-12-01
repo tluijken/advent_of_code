@@ -1,28 +1,22 @@
-use std::collections::HashMap;
-
 fn part_1(input: &str) -> u32 {
-    *get_sorted_weights(input).first().unwrap_or(&u32::MIN)
+    get_sorted_weights(input)[0]
 }
 
 fn part_2(input: &str) -> u32 {
-    get_sorted_weights(input)[..3].iter().fold(0, |acc, i| acc + i)
+    get_sorted_weights(input)[..3].iter().sum()
 }
 
 fn get_sorted_weights(input: &str) -> Vec<u32> {
     let mut result = input
         .lines()
         .map(|l| l.trim().parse::<u32>())
-        .fold(HashMap::new(), |mut acc, parsed| {
+        .fold(vec![0], |mut acc, parsed| {
             match parsed {
-                Ok(weight) => *acc.entry(std::cmp::max(0, acc.len() as isize - 1) as usize).or_insert(0) += weight,
-                _ => {
-                    acc.insert(acc.len(), 0);
-                }
+                Ok(weight) => *acc.iter_mut().last().unwrap_or(&mut 0) += weight,
+                _ => { acc.push(0); }
             }
             acc
-        })
-        .into_values()
-        .collect::<Vec<u32>>();
+        });
     result.sort_by(|a, b| b.cmp(a));
     result
 }
