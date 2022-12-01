@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
 fn part_1(input: &str) -> u32 {
-    get_sorted_weights(input).first().unwrap_or(&u32::MIN).to_owned()
+    *get_sorted_weights(input).first().unwrap_or(&u32::MIN)
 }
 
 fn part_2(input: &str) -> u32 {
-    get_sorted_weights(input)[..3].iter().fold(0, |acc, i| acc + i).to_owned()
+    get_sorted_weights(input)[..3].iter().fold(0, |acc, i| acc + i)
 }
 
 fn get_sorted_weights(input: &str) -> Vec<u32> {
