@@ -1,55 +1,38 @@
 use std::collections::HashMap;
 
-pub fn part_1(input: &str) -> u32 {
-    let result = get_sorted_weights(input);
-    match result.first() {
-        Some(max) => max.to_owned(),
-        None => 0,
-    }
+fn part_1(input: &str) -> u32 {
+    get_sorted_weights(input).first().unwrap_or(&u32::MIN).to_owned()
 }
 
-pub fn part_2(input: &str) -> u32 {
-    let result = get_sorted_weights(input);
-    let last_weight: &u32 = &result[..3].iter().fold(0, |total, item| item + total);
-    last_weight.to_owned()
+fn part_2(input: &str) -> u32 {
+    get_sorted_weights(input)[..3].iter().fold(0, |acc, i| acc + i).to_owned()
 }
 
 fn get_sorted_weights(input: &str) -> Vec<u32> {
     let mut result = input
         .lines()
-        .map(|l| l.trim())
-        .fold(HashMap::new(), |mut acc, line| match line.is_empty() {
-            true => {
-                acc.insert(acc.keys().len(), 0);
-                acc
+        .map(|l| l.trim().parse::<u32>())
+        .fold(HashMap::new(), |mut acc, parsed| {
+            match parsed {
+                Ok(weight) => *acc.entry(std::cmp::max(0, acc.len() as isize - 1) as usize).or_insert(0) += weight,
+                _ => {
+                    acc.insert(acc.len(), 0);
+                }
             }
-            false => {
-                let index = match acc.is_empty() {
-                    true => 0,
-                    false => acc.len() - 1,
-                };
-                let entry = acc.entry(index).or_insert(0);
-                *entry += line.parse::<u32>().unwrap_or(0);
-                acc
-            }
+            acc
         })
-        .values()
-        .map(|v| v.to_owned())
+        .into_values()
         .collect::<Vec<u32>>();
-    result.sort();
-    result.reverse();
+    result.sort_by(|a, b| b.cmp(a));
     result
 }
 
 fn main() {
     let input = std::fs::read_to_string("input").unwrap();
-
-    let result = part_1(&input);
-    println!("{}", result);
-
-    let result = part_2(&input);
-    println!("{}", result);
+    println!("{}", part_1(&input));
+    println!("{}", part_2(&input));
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -69,12 +52,10 @@ mod tests {
         10000";
     #[test]
     fn test_part_1() {
-        let output = part_1(INPUT);
-        assert_eq!(24000, output);
+        assert_eq!(24000, part_1(INPUT));
     }
     #[test]
     fn test_part_2() {
-        let output = part_2(INPUT);
-        assert_eq!(45000, output);
+        assert_eq!(45000, part_2(INPUT));
     }
 }
