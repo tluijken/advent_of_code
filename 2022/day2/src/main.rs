@@ -1,6 +1,9 @@
 use std::cmp::Ordering;
 use std::str::FromStr;
 
+const DRAW_SCORE: u32 = 3;
+const WIN_SCORE: u32 = 6;
+
 #[derive(Eq, Debug, PartialOrd, PartialEq, Copy, Clone)]
 enum PlayerMove {
     Rock = 1,
@@ -47,8 +50,8 @@ fn part_1(input: &str) -> u32 {
         })
         .fold(0, |acc, i| match i.1.cmp(&i.0) {
             Ordering::Less => acc + i.1 as u32,
-            Ordering::Equal => acc + 3 + i.1 as u32,
-            Ordering::Greater => acc + 6 + i.1 as u32,
+            Ordering::Equal => acc + DRAW_SCORE + i.1 as u32,
+            Ordering::Greater => acc + WIN_SCORE + i.1 as u32,
         })
 }
 
@@ -70,12 +73,12 @@ fn part_2(input: &str) -> u32 {
                 PlayerMove::Scissors => acc + PlayerMove::Paper as u32,
             },
             // Draw
-            PlayerMove::Paper => acc + 3 + i.0 as u32,
+            PlayerMove::Paper => acc + DRAW_SCORE + i.0 as u32,
             // Win
             PlayerMove::Scissors => match i.0 {
-                PlayerMove::Rock => acc + 6 + PlayerMove::Paper as u32,
-                PlayerMove::Paper => acc + 6 + PlayerMove::Scissors as u32,
-                PlayerMove::Scissors => acc + 6 + PlayerMove::Rock as u32,
+                PlayerMove::Rock => acc + WIN_SCORE + PlayerMove::Paper as u32,
+                PlayerMove::Paper => acc + WIN_SCORE + PlayerMove::Scissors as u32,
+                PlayerMove::Scissors => acc + WIN_SCORE + PlayerMove::Rock as u32,
             },
         })
 }
