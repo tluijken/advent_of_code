@@ -3,7 +3,7 @@ use std::collections::HashMap;
 fn part_1(input: &str) -> usize {
     input
         .lines()
-        .map(|line| line.split_at(input.len() / 2))
+        .map(|line| line.split_at(line.len() / 2))
         .map(|comp| {
             comp.0
                 .chars()
