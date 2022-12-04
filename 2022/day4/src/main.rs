@@ -1,42 +1,28 @@
 fn part_1(input: &str) -> usize {
-    input
-        .lines()
-        .map(|l| l.split(",").collect::<Vec<&str>>())
-        .fold(vec![], |mut teams, pair| {
-            teams.push((
-                parse_section(pair.first().unwrap()),
-                parse_section(pair.last().unwrap()),
-            ));
-            teams
-        })
+    get_teams(input)
         .iter()
-        .filter(|team| {
-            (team.0 .0 >= team.1 .0 && team.0 .1 <= team.1 .1)
-                || (team.1 .0 >= team.0 .0 && team.1 .1 <= team.0 .1)
-        })
+        .filter(|team| (team.0 .0 >= team.1 .0 && team.0 .1 <= team.1 .1) ||
+                       (team.1 .0 >= team.0 .0 && team.1 .1 <= team.0 .1))
         .count()
 }
 fn part_2(input: &str) -> usize {
-    input
-        .lines()
-        .map(|l| l.split(",").collect::<Vec<&str>>())
-        .fold(vec![], |mut teams, pair| {
-            teams.push((
-                parse_section(pair.first().unwrap()),
-                parse_section(pair.last().unwrap()),
-            ));
-            teams
-        })
+    get_teams(input)
         .iter()
         .filter(|team| {
-            (team.0 .0..=team.0 .1).contains(&team.1 .0)
-                || (team.0 .0..=team.0 .1).contains(&team.1 .1)
-                || (team.1 .0..=team.1 .1).contains(&team.0 .0)
-                || (team.1 .0..=team.1 .1).contains(&team.0 .1)
-        })
-        .count()
+                (team.0 .0..=team.0 .1).contains(&team.1 .0) ||
+                (team.0 .0..=team.0 .1).contains(&team.1 .1) ||
+                (team.1 .0..=team.1 .1).contains(&team.0 .0) ||
+                (team.1 .0..=team.1 .1).contains(&team.0 .1)
+        }).count()
 }
 
+fn get_teams(input: &str) -> Vec<((u8, u8), (u8, u8))> {
+    input.lines().map(|l| l.split(",").collect::<Vec<&str>>())
+        .fold(vec![], |mut teams, pair| {
+            teams.push((parse_section(pair.first().unwrap()), parse_section(pair.last().unwrap())));
+            teams
+        })
+}
 fn parse_section(pair_item: &str) -> (u8, u8) {
     let range = pair_item
         .split("-")
