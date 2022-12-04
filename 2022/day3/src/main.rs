@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 fn part_1(input: &str) -> usize {
     input
         .lines()
@@ -16,13 +14,7 @@ fn part_1(input: &str) -> usize {
 
 fn part_2(input: &str) -> usize {
     input
-        .lines()
-        .enumerate()
-        .fold(HashMap::new(), |mut hm, (i, line)| {
-            hm.entry(i / 3 as usize).or_insert(vec![]).push(line);
-            hm
-        })
-        .values()
+        .lines().collect::<Vec<&str>>().chunks(3)
         .map(|group| {
              group.iter().map(|l| l
                     .chars()
