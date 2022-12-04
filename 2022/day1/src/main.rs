@@ -3,7 +3,7 @@ fn part_1(input: &str) -> u32 {
 }
 
 fn part_2(input: &str) -> u32 {
-    get_sorted_weights(input)[..3].iter().sum()
+    get_sorted_weights(input).iter().take(3).sum()
 }
 
 fn get_sorted_weights(input: &str) -> Vec<u32> {
