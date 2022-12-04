@@ -3,7 +3,7 @@ fn part_1(input: &str) -> u32 {
         .lines()
         .map(|line| line.split_at(line.len() / 2))
         .map(|comp| {
-            find_index(&comp.0
+            get_prio(&comp.0
                 .chars()
                 .find(|c| comp.1.contains(*c))
                 .unwrap())
@@ -14,7 +14,7 @@ fn part_2(input: &str) -> u32 {
     input
         .lines().collect::<Vec<&str>>().chunks(3)
         .map(|group| {
-            find_index(&group.iter().map(|l| l
+            get_prio(&group.iter().map(|l| l
                     .chars()
                     .find(|c| group.iter().all(|ll| ll.contains(*c)))
                     .unwrap()
@@ -22,7 +22,7 @@ fn part_2(input: &str) -> u32 {
         }).sum()
 }
 
-fn find_index(chr: &char) -> u32 {
+fn get_prio(chr: &char) -> u32 {
     let i = *chr as u32;
     match i <= 90 {
         true => i - 38,
