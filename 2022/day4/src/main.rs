@@ -2,7 +2,7 @@ fn part_1(input: &str) -> usize {
     get_teams(input)
         .iter()
         .filter(|team| (team.0 .0 >= team.1 .0 && team.0 .1 <= team.1 .1) ||
-                       (team.1 .0 >= team.0 .0 && team.1 .1 <= team.0 .1))
+                                   (team.1 .0 >= team.0 .0 && team.1 .1 <= team.0 .1))
         .count()
 }
 fn part_2(input: &str) -> usize {
