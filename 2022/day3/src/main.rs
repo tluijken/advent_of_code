@@ -3,27 +3,23 @@ fn part_1(input: &str) -> usize {
         .lines()
         .map(|line| line.split_at(line.len() / 2))
         .map(|comp| {
-            comp.0
+            find_index(&comp.0
                 .chars()
                 .find(|c| comp.1.chars().any(|cc| &cc == c))
-                .unwrap()
-        })
-        .map(|common| find_index(&common))
-        .sum()
+                .unwrap())
+        }).sum()
 }
 
 fn part_2(input: &str) -> usize {
     input
         .lines().collect::<Vec<&str>>().chunks(3)
         .map(|group| {
-             group.iter().map(|l| l
+            find_index(&group.iter().map(|l| l
                     .chars()
                     .find(|c| group.iter().all(|ll| ll.chars().any(|cc| &cc == c)))
                     .unwrap()
-            ).collect::<Vec<char>>().first().unwrap().to_owned()
-        })
-        .map(|common| find_index(&common))
-        .sum()
+            ).next().unwrap())
+        }).sum()
 }
 
 fn find_index(chr: &char) -> usize {
