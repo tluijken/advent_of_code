@@ -1,34 +1,32 @@
-fn part_1(input: &str) -> usize {
+fn part_1(input: &str) -> u32 {
     input
         .lines()
         .map(|line| line.split_at(line.len() / 2))
         .map(|comp| {
             find_index(&comp.0
                 .chars()
-                .find(|c| comp.1.chars().any(|cc| &cc == c))
+                .find(|c| comp.1.contains(*c))
                 .unwrap())
         }).sum()
 }
 
-fn part_2(input: &str) -> usize {
+fn part_2(input: &str) -> u32 {
     input
         .lines().collect::<Vec<&str>>().chunks(3)
         .map(|group| {
             find_index(&group.iter().map(|l| l
                     .chars()
-                    .find(|c| group.iter().all(|ll| ll.chars().any(|cc| &cc == c)))
+                    .find(|c| group.iter().all(|ll| ll.contains(*c)))
                     .unwrap()
             ).next().unwrap())
         }).sum()
 }
 
-fn find_index(chr: &char) -> usize {
-    match ('a'..='z').position(|c| &c == chr) {
-        Some(lower_index) => lower_index + 1,
-        None => match ('A'..='Z').position(|c| &c == chr) {
-            Some(upper_index) => upper_index + 27,
-            None => 0,
-        },
+fn find_index(chr: &char) -> u32 {
+    let i = *chr as u32;
+    match i <= 90 {
+        true => i - 38,
+        false => i - 96
     }
 }
 
