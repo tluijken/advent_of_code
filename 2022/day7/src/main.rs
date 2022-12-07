@@ -14,10 +14,10 @@ fn part_2(input: &str) -> u32 {
     let mut cleanup_folders = folders
         .iter()
         .filter(|kv| free_space + kv.1 >= 30000000)
-        .map(|kv| kv.1)
-        .collect::<Vec<&u32>>();
+        .map(|kv| *kv.1)
+        .collect::<Vec<u32>>();
     cleanup_folders.sort();
-    *cleanup_folders.first().unwrap().clone()
+    cleanup_folders.first().unwrap().to_owned()
 }
 
 fn get_folder_sizes(input: &str) -> HashMap<String, u32> {
@@ -38,16 +38,16 @@ fn get_folder_sizes(input: &str) -> HashMap<String, u32> {
         }
         str
     });
-
+    //sum subfolders
     folders.iter().fold(HashMap::new(), |mut hm, f| {
         let sum = folders
             .keys()
             .filter(|k| k.starts_with(f.0))
             .collect::<Vec<&String>>()
             .iter()
-            .map(|k| folders.get(*k).unwrap())
+            .map(|k| folders.get(*k).unwrap_or(&0))
             .sum();
-        hm.entry(f.0.clone()).or_insert(sum);
+        hm.entry(f.0.to_owned()).or_insert(sum);
         hm
     })
 }
