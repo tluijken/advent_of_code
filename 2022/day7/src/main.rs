@@ -8,53 +8,48 @@ fn part_1(input: &str) -> u32 {
         .sum()
 }
 
+fn part_2(input: &str) -> u32 {
+    let folders = get_folder_sizes(input);
+    let free_space = 70000000 - folders.get("").unwrap();
+    let mut cleanup_folders = folders
+        .iter()
+        .filter(|kv| free_space + kv.1 >= 30000000)
+        .map(|kv| kv.1)
+        .collect::<Vec<&u32>>();
+    cleanup_folders.sort();
+    *cleanup_folders.first().unwrap().clone()
+}
+
 fn get_folder_sizes(input: &str) -> HashMap<String, u32> {
-    let mut current = String::from("/");
+    let mut current = String::from("");
     let folders = input.lines().skip(1).fold(HashMap::new(), |mut str, cmd| {
         if cmd.starts_with("$ cd") {
-            if cmd.ends_with("..") {
-                if let Some(pos) = current.rfind('/') {
+            match (cmd.ends_with(".."), current.rfind('/')) {
+                (true, Some(pos)) => {
                     current = current[..pos].to_string();
                 }
-            } else {
-                current = format!(
-                    "{}{}{}",
-                    current,
-                    match current.eq("/") {
-                        true => "",
-                        false => "/",
-                    },
-                    &cmd[5..]
-                );
+                _ => current = format!("{}/{}", current, &cmd[5..]),
             }
         }
+        let entry = str.entry(current.clone()).or_insert(0);
         if cmd.as_bytes()[0].is_ascii_digit() {
             let spl: (&str, &str) = cmd.split_once(' ').unwrap();
-            *str.entry(current.clone()).or_insert(0) += spl.0.parse::<u32>().unwrap();
-        }
-        if cmd.starts_with("dir") {
-            let _ = *str.entry(current.clone()).or_insert(0);
+            *entry += spl.0.parse::<u32>().unwrap();
         }
         str
     });
 
     folders.iter().fold(HashMap::new(), |mut hm, f| {
-        let similar_folders = folders
+        let sum = folders
             .keys()
             .filter(|k| k.starts_with(f.0))
-            .collect::<Vec<&String>>();
-        let sum = similar_folders
+            .collect::<Vec<&String>>()
             .iter()
             .map(|k| folders.get(*k).unwrap())
             .sum();
         hm.entry(f.0.clone()).or_insert(sum);
         hm
     })
-}
-
-fn part_2(input: &str) -> u32 {
-    let folders = get_folder_sizes(input);
-    0
 }
 
 fn main() {
@@ -95,6 +90,6 @@ $ ls
     }
     #[test]
     fn test_part_2() {
-        assert_eq!(45000, part_2(INPUT));
+        assert_eq!(24933642, part_2(INPUT));
     }
 }
