@@ -33,8 +33,7 @@ fn get_folder_sizes(input: &str) -> HashMap<String, u32> {
         }
         let entry = str.entry(current.clone()).or_insert(0);
         if cmd.as_bytes()[0].is_ascii_digit() {
-            let spl: (&str, &str) = cmd.split_once(' ').unwrap();
-            *entry += spl.0.parse::<u32>().unwrap();
+            *entry += cmd.split_once(' ').unwrap().0.parse::<u32>().unwrap();
         }
         str
     });
