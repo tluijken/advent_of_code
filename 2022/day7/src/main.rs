@@ -43,9 +43,7 @@ fn get_folder_sizes(input: &str) -> HashMap<String, u32> {
         let sum = folders
             .keys()
             .filter(|k| k.starts_with(f.0))
-            .collect::<Vec<&String>>()
-            .iter()
-            .map(|k| folders.get(*k).unwrap_or(&0))
+            .map(|k| folders.get(k).unwrap_or(&0))
             .sum();
         hm.entry(f.0.to_owned()).or_insert(sum);
         hm
