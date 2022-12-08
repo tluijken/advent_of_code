@@ -20,16 +20,16 @@ fn read_tree_map(input: &str) -> Vec<Vec<(u32, bool)>> {
 
 fn check_visible_trees(treemap: &mut Vec<Vec<(u32, bool)>>) {
     treemap.iter_mut().for_each(|r| {
-        r.iter_mut().enumerate().fold(0, |mut max, (i, c)| {
-            if i == 0 || max < c.0 {
-                max = c.0;
+        r.iter_mut().fold(None, |mut max, c| {
+            if max.is_none() || max.unwrap_or(0) < c.0 {
+                max = Some(c.0);
                 c.1 = true;
             }
             max
         });
-        r.iter_mut().rev().enumerate().fold(0, |mut max, (i, c)| {
-            if i == 0 || max < c.0 {
-                max = c.0;
+        r.iter_mut().rev().fold(None, |mut max, c| {
+            if max.is_none() || max.unwrap_or(0) < c.0 {
+                max = Some(c.0);
                 c.1 = true;
             }
             max
