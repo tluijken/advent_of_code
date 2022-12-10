@@ -1,7 +1,9 @@
+#[aoc(day6, part1)]
 fn part_1(input: &str) -> usize {
     get_distinct_sequence(input, 4)
 }
 
+#[aoc(day6, part2)]
 fn part_2(input: &str) -> usize {
     get_distinct_sequence(input, 14)
 }
@@ -16,12 +18,6 @@ fn get_distinct_sequence(input: &str, window_size: usize) -> usize {
         .map(|(i, _)| i)
         .unwrap()
         + window_size
-}
-
-fn main() {
-    let input = std::fs::read_to_string("input").unwrap();
-    println!("{}", part_1(&input));
-    println!("{}", part_2(&input));
 }
 
 #[cfg(test)]

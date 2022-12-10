@@ -1,5 +1,6 @@
 use Result::{Err as Break, Ok as Next};
 
+#[aoc(day8, part1)]
 fn part_1(input: &str) -> usize {
     let mut treemap = read_tree_map(input);
     check_visible_trees(&mut treemap);
@@ -110,6 +111,7 @@ fn check_visible_trees(treemap: &mut Vec<Vec<(u32, bool, u32)>>) {
     }
 }
 
+#[aoc(day8, part2)]
 fn part_2(input: &str) -> u32 {
     let mut treemap = read_tree_map(input);
     calc_scenic_score(&mut treemap);
@@ -120,12 +122,6 @@ fn part_2(input: &str) -> u32 {
         .max()
         .unwrap_or(0);
     highest_scenic_score
-}
-
-fn main() {
-    let input = std::fs::read_to_string("input").unwrap();
-    println!("{}", part_1(&input));
-    println!("{}", part_2(&input));
 }
 
 #[cfg(test)]

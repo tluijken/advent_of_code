@@ -1,3 +1,4 @@
+#[aoc(day5, part1)]
 fn part_1(input: &str) -> String {
     let mut stacks = fill_stacks(input, get_number_of_stacks(input));
     for movement in get_movements(input) {
@@ -7,6 +8,7 @@ fn part_1(input: &str) -> String {
     get_cargo_top_crates(&stacks)
 }
 
+#[aoc(day5, part2)]
 fn part_2(input: &str) -> String {
     let mut stacks = fill_stacks(input, get_number_of_stacks(input));
     for movement in get_movements(input) {
@@ -80,12 +82,6 @@ fn pick_crates_from_stack(
         items.push(stacks[stack_number as usize - 1].pop().unwrap());
     }
     items
-}
-
-fn main() {
-    let input = std::fs::read_to_string("input").unwrap();
-    println!("{}", part_1(&input));
-    println!("{}", part_2(&input));
 }
 
 #[cfg(test)]

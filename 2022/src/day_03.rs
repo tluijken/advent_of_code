@@ -1,3 +1,4 @@
+#[aoc(day3, part1)]
 fn part_1(input: &str) -> u32 {
     input
         .lines()
@@ -13,6 +14,7 @@ fn part_1(input: &str) -> u32 {
         .sum()
 }
 
+#[aoc(day3, part2)]
 fn part_2(input: &str) -> u32 {
     input
         .lines()
@@ -40,12 +42,6 @@ fn get_prio(chr: &char) -> u32 {
         true => i - 38,
         false => i - 96,
     }
-}
-
-fn main() {
-    let input = std::fs::read_to_string("input").unwrap();
-    println!("{}", part_1(&input));
-    println!("{}", part_2(&input));
 }
 
 #[cfg(test)]

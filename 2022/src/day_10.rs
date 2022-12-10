@@ -1,7 +1,4 @@
-fn part_1(input: &str) -> i32 {
-    parse_input(input).0
-}
-
+#[aoc_generator(day10)]
 fn parse_input(input: &str) -> (i32, String) {
     let result = input
         .lines()
@@ -33,14 +30,14 @@ fn parse_input(input: &str) -> (i32, String) {
     (result.1, result.3)
 }
 
-fn part_2(input: &str) -> String {
-    parse_input(input).1
+#[aoc(day10, part1)]
+fn part_1(input: &(i32, String)) -> i32 {
+    input.0
 }
 
-fn main() {
-    let input = std::fs::read_to_string("input").unwrap();
-    println!("{}", part_1(&input));
-    println!("{}", part_2(&input));
+#[aoc(day10, part2)]
+fn part_2(input: &(i32, String)) -> String {
+    input.1.clone()
 }
 
 #[cfg(test)]
@@ -194,7 +191,7 @@ noop
 noop";
     #[test]
     fn test_part_1() {
-        assert_eq!(13140, part_1(INPUT));
+        assert_eq!(13140, part_1(&parse_input(INPUT)));
     }
     #[test]
     fn test_part_2() {}

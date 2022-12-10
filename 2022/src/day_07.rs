@@ -1,25 +1,6 @@
 use std::collections::HashMap;
 
-fn part_1(input: &str) -> u32 {
-    get_folder_sizes(input)
-        .iter()
-        .filter(|kv| kv.1 <= &100000)
-        .map(|kv| kv.1)
-        .sum()
-}
-
-fn part_2(input: &str) -> u32 {
-    let folders = get_folder_sizes(input);
-    let free_space = 70000000 - folders.get("").unwrap();
-    let mut cleanup_folders = folders
-        .iter()
-        .filter(|kv| free_space + kv.1 >= 30000000)
-        .map(|kv| *kv.1)
-        .collect::<Vec<u32>>();
-    cleanup_folders.sort();
-    cleanup_folders.first().unwrap().to_owned()
-}
-
+#[aoc_generator(day7)]
 fn get_folder_sizes(input: &str) -> HashMap<String, u32> {
     let mut current = String::from("");
     let folders = input.lines().skip(1).fold(HashMap::new(), |mut str, cmd| {
@@ -49,10 +30,25 @@ fn get_folder_sizes(input: &str) -> HashMap<String, u32> {
     })
 }
 
-fn main() {
-    let input = std::fs::read_to_string("input").unwrap();
-    println!("{}", part_1(&input));
-    println!("{}", part_2(&input));
+#[aoc(day7, part1)]
+fn part_1(folders: &HashMap<String, u32>) -> u32 {
+    folders
+        .iter()
+        .filter(|kv| kv.1 <= &100000)
+        .map(|kv| kv.1)
+        .sum()
+}
+
+#[aoc(day7, part2)]
+fn part_2(folders: &HashMap<String, u32>) -> u32 {
+    let free_space = 70000000 - folders.get("").unwrap();
+    let mut cleanup_folders = folders
+        .iter()
+        .filter(|kv| free_space + kv.1 >= 30000000)
+        .map(|kv| *kv.1)
+        .collect::<Vec<u32>>();
+    cleanup_folders.sort();
+    cleanup_folders.first().unwrap().to_owned()
 }
 
 #[cfg(test)]
@@ -83,10 +79,10 @@ $ ls
 7214296 k";
     #[test]
     fn test_part_1() {
-        assert_eq!(95437, part_1(INPUT));
+        assert_eq!(95437, part_1(&get_folder_sizes(INPUT)));
     }
     #[test]
     fn test_part_2() {
-        assert_eq!(24933642, part_2(INPUT));
+        assert_eq!(24933642, part_2(&get_folder_sizes(INPUT)));
     }
 }

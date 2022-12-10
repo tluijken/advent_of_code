@@ -1,10 +1,12 @@
 use std::collections::HashSet;
 
+#[aoc(day9, part1)]
 fn part_1(input: &str) -> usize {
     let path = path_head(input, 1);
     path.len()
 }
 
+#[aoc(day9, part2)]
 fn part_2(input: &str) -> usize {
     let path = path_head(input, 9);
     path.len()
@@ -42,12 +44,6 @@ fn path_head(input: &str, followers: usize) -> HashSet<(i32, i32)> {
             },
         );
     visited
-}
-
-fn main() {
-    let input = std::fs::read_to_string("input").unwrap();
-    println!("{}", part_1(&input));
-    println!("{}", part_2(&input));
 }
 
 #[cfg(test)]
