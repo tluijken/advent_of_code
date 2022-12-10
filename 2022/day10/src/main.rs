@@ -16,11 +16,11 @@ fn parse_input(input: &str) -> (i32, String) {
                     if curr.2 % 40 == 0 {
                         curr.3.push('\n');
                     }
-                    curr.3.push(if (curr.0 - curr.2 % 40).abs() < 2 {
-                        'X'
+                    if (curr.0 - curr.2 % 40).abs() < 2 {
+                        curr.3.push('X');
                     } else {
-                        ' '
-                    });
+                        curr.3.push(' ');
+                    }
                     curr.2 += 1;
                     if (curr.2 - 20) % 40 == 0 {
                         curr.1 += curr.2 * curr.0;
