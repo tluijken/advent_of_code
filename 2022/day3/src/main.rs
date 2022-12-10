@@ -2,31 +2,43 @@ fn part_1(input: &str) -> u32 {
     input
         .lines()
         .map(|line| line.split_at(line.len() / 2))
-        .map(|comp| {
-            get_prio(&comp.0
-                .chars()
-                .find(|c| comp.1.contains(*c))
-                .unwrap())
-        }).sum()
+        .map(|(first_half, second_half)| {
+            get_prio(
+                &first_half
+                    .chars()
+                    .find(|c| second_half.contains(*c))
+                    .unwrap(),
+            )
+        })
+        .sum()
 }
 
 fn part_2(input: &str) -> u32 {
     input
-        .lines().collect::<Vec<&str>>().chunks(3)
+        .lines()
+        .collect::<Vec<&str>>()
+        .chunks(3)
         .map(|group| {
-            get_prio(&group.iter().map(|l| l
-                    .chars()
-                    .find(|c| group.iter().all(|ll| ll.contains(*c)))
-                    .unwrap()
-            ).next().unwrap())
-        }).sum()
+            get_prio(
+                &group
+                    .iter()
+                    .map(|l| {
+                        l.chars()
+                            .find(|c| group.iter().all(|ll| ll.contains(*c)))
+                            .unwrap()
+                    })
+                    .next()
+                    .unwrap(),
+            )
+        })
+        .sum()
 }
 
 fn get_prio(chr: &char) -> u32 {
     let i = *chr as u32;
     match i <= 90 {
         true => i - 38,
-        false => i - 96
+        false => i - 96,
     }
 }
 
