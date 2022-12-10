@@ -11,7 +11,7 @@ fn part_2(input: &str) -> usize {
 }
 
 fn path_head(input: &str, followers: usize) -> HashSet<(i32, i32)> {
-    let mut visited = HashSet::with_capacity(10000);
+    let mut visited = HashSet::new();
     input
         .lines()
         .map(|l| {
