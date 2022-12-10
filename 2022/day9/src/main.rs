@@ -1,5 +1,7 @@
+use std::collections::HashSet;
+
 fn part_1(input: &str) -> usize {
-    let path = path_head(input, 2);
+    let path = path_head(input, 1);
     path.len()
 }
 
@@ -8,82 +10,40 @@ fn part_2(input: &str) -> usize {
     path.len()
 }
 
-fn path_head(input: &str, path_length: usize) -> Vec<(i32, i32)> {
-    let mut tail_path = vec![(0, 0)];
-    input.lines().fold(
-        {
-            let mut path_pos = vec![];
-            (0..path_length).for_each(|_| path_pos.push((0, 0)));
-            path_pos
-        },
-        |mut path: Vec<(i32, i32)>, m| {
-            match (m.chars().nth(0), m[2..].parse::<u32>().unwrap()) {
-                (Some('U'), c) => (0..c).for_each(|_| {
-                    path[0].1 = path[0].1 + 1;
-                    (1..path_length).for_each(|i| {
-                        if path[i].1 < path[i - 1].1 - 1 {
-                            path[i].1 = path[i - 1].1 - 1;
-                            path[i].0 = path[i - 1].0;
-                        }
-                    });
-                    if !tail_path
-                        .iter()
-                        .any(|y| y.0 == path.last().unwrap().0 && y.1 == path.last().unwrap().1)
-                    {
-                        tail_path.push((path.last().unwrap().0, path.last().unwrap().1));
-                    }
-                }),
-                (Some('L'), c) => (0..c).for_each(|_| {
-                    path[0].0 = path[0].0 - 1;
-                    (1..path_length).for_each(|i| {
-                        if path[i].0 > path[i - 1].0 + 1 {
-                            path[i].0 = path[i - 1].0 + 1;
-                            path[i].1 = path[i - 1].1;
-                        }
-                    });
-                    if !tail_path
-                        .iter()
-                        .any(|y| y.0 == path.last().unwrap().0 && y.1 == path.last().unwrap().1)
-                    {
-                        tail_path.push((path.last().unwrap().0, path.last().unwrap().1));
-                    }
-                }),
-                (Some('R'), c) => (0..c).for_each(|_| {
-                    path[0].0 = path[0].0 + 1;
-                    (1..path_length).for_each(|i| {
-                        if path[i].0 < path[i - 1].0 - 1 {
-                            path[i].0 = path[i - 1].0 - 1;
-                            path[i].1 = path[i - 1].1;
-                        }
-                    });
-                    if !tail_path
-                        .iter()
-                        .any(|y| y.0 == path.last().unwrap().0 && y.1 == path.last().unwrap().1)
-                    {
-                        tail_path.push((path.last().unwrap().0, path.last().unwrap().1));
-                    }
-                }),
-                (Some('D'), c) => (0..c).for_each(|_| {
-                    path[0].1 = path[0].1 - 1;
-                    (1..path_length).for_each(|i| {
-                        if path[i].1 > path[i - 1].1 + 1 {
-                            path[i].1 = path[i - 1].1 + 1;
-                            path[i].0 = path[i - 1].0;
-                        }
-                    });
-                    if !tail_path
-                        .iter()
-                        .any(|y| y.0 == path.last().unwrap().0 && y.1 == path.last().unwrap().1)
-                    {
-                        tail_path.push((path.last().unwrap().0, path.last().unwrap().1));
-                    }
-                }),
-                _ => println!("Unexpected move"),
+fn path_head(input: &str, followers: usize) -> HashSet<(i32, i32)> {
+    let mut visited = HashSet::with_capacity(10000);
+    input
+        .lines()
+        .map(|l| {
+            let count = l[2..].parse::<u32>().unwrap();
+            match l.as_bytes()[0] as char {
+                'U' => ((0, 1), count),
+                'D' => ((0, -1), count),
+                'R' => ((1, 0), count),
+                'L' => ((-1, 0), count),
+                _ => unreachable!(),
             }
-            path
-        },
-    );
-    tail_path
+        })
+        .collect::<Vec<_>>()
+        .iter()
+        .fold(
+            vec![(0i32, 0i32); followers + 1],
+            |mut rope, ((dx, dy), len)| {
+                for _ in 0..len.clone() {
+                    rope[0] = (rope[0].0 + dx, rope[0].1 + dy);
+                    for i in 1..rope.len() {
+                        let (dx, dy) = (rope[i - 1].0 - rope[i].0, rope[i - 1].1 - rope[i].1);
+                        if dx.abs() > 1 || dy.abs() > 1 {
+                            rope[i].0 += dx.signum();
+                            rope[i].1 += dy.signum();
+                        }
+                    }
+                    visited.insert(rope[followers]);
+                }
+                rope
+            },
+        );
+    visited
 }
 
 fn main() {
@@ -105,11 +65,11 @@ L 5
 R 2";
     #[test]
     fn test_part_1() {
-        // assert_eq!(13, part_1(INPUT));
+        assert_eq!(13, part_1(INPUT));
     }
     #[test]
     fn test_part_2() {
-        //   assert_eq!(1, part_2(INPUT));
+        assert_eq!(1, part_2(INPUT));
         assert_eq!(
             36,
             part_2(
