@@ -27,17 +27,17 @@ fn path_head(input: &str, followers: usize) -> HashSet<(i32, i32)> {
         .fold(
             vec![(0i32, 0i32); followers + 1],
             |mut rope, ((x, y), len)| {
-                for _ in 0..len.clone() {
+                (0..len).for_each(|_| {
                     rope[0] = (rope[0].0 + x, rope[0].1 + y);
-                    for i in 1..rope.len() {
+                    (1..rope.len()).for_each(|i| {
                         let (x, y) = (rope[i - 1].0 - rope[i].0, rope[i - 1].1 - rope[i].1);
                         if x.abs() > 1 || y.abs() > 1 {
                             rope[i].0 += x.signum();
                             rope[i].1 += y.signum();
                         }
-                    }
+                    });
                     visited.insert(rope[followers]);
-                }
+                });
                 rope
             },
         );
