@@ -1,29 +1,40 @@
 fn part_1(input: &str) -> i32 {
-    input
+    parse_input(input).0
+}
+
+fn parse_input(input: &str) -> (i32, String) {
+    let result = input
         .lines()
         .map(|l| match l.as_bytes()[0] as char {
             'n' => (0, 1),
             _ => (l[4..].trim().parse::<i32>().unwrap_or(0), 2),
         })
         .fold(
-            (1i32, 0i32, 0i32, 20i32),
+            (1i32, 0i32, 0i32, String::from("")),
             |mut curr, (signal, cycle_size)| {
                 (0..cycle_size).for_each(|_| {
+                    if curr.2 % 40 == 0 {
+                        curr.3.push('\n');
+                    }
+                    curr.3.push(if (curr.0 - curr.2 % 40).abs() < 2 {
+                        'X'
+                    } else {
+                        ' '
+                    });
                     curr.2 += 1;
-                    if curr.3 == curr.2 {
+                    if (curr.2 - 20) % 40 == 0 {
                         curr.1 += curr.2 * curr.0;
-                        curr.3 += 40;
                     }
                 });
                 curr.0 += signal;
                 curr
             },
-        )
-        .1
+        );
+    (result.1, result.3)
 }
 
-fn part_2(input: &str) -> u32 {
-    todo!();
+fn part_2(input: &str) -> String {
+    parse_input(input).1
 }
 
 fn main() {
@@ -186,7 +197,5 @@ noop";
         assert_eq!(13140, part_1(INPUT));
     }
     #[test]
-    fn test_part_2() {
-        assert_eq!(45000, part_2(INPUT));
-    }
+    fn test_part_2() {}
 }
