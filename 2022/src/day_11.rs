@@ -1,12 +1,12 @@
 #[derive(Debug, Clone, Copy)]
 enum Operation {
-    Other,
+    MonkeyDance,
     Add(u64),
     Multiply(u64),
 }
 
 #[aoc_generator(day11)]
-fn parse_monkeys(input: &str) -> Vec<(Vec<u64>, Operation, u64, usize, usize)> {
+fn parse_monkeys(input: &str) -> Vec<(Vec<u64>, Operation, u64, usize, usize, usize)> {
     input
         .split("\n\n")
         .map(|m| {
@@ -22,52 +22,53 @@ fn parse_monkeys(input: &str) -> Vec<(Vec<u64>, Operation, u64, usize, usize)> {
                         true => Operation::Add(n),
                         false => Operation::Multiply(n),
                     })
-                    .unwrap_or(Operation::Other),
+                    .unwrap_or(Operation::MonkeyDance),
                 lines[2][19..].parse().unwrap_or(0),
                 lines[3][25..].parse().unwrap_or(0),
                 lines[4][26..].parse().unwrap_or(0),
+                0,
             )
         })
         .collect()
 }
 
 fn play(
-    monkeys: &mut Vec<(Vec<u64>, Operation, u64, usize, usize)>,
+    monkeys: &mut Vec<(Vec<u64>, Operation, u64, usize, usize, usize)>,
     rounds: usize,
     f: impl Fn(u64) -> u64,
 ) -> usize {
-    let mut inspections = vec![0; monkeys.len()];
     (0..rounds).for_each(|_| {
         (0..monkeys.len()).for_each(|m| {
-            let (items, operation, test, throw_true, throw_false) = monkeys[m].clone();
+            let (items, operation, test, throw_true, throw_false, _) = monkeys[m].clone();
             items.iter().for_each(|item| {
                 let new = match operation {
                     Operation::Add(n) => f(item + n),
                     Operation::Multiply(n) => f(item * n),
-                    Operation::Other => f(item * item),
+                    Operation::MonkeyDance => f(item * item),
                 };
                 match new % test == 0 {
                     true => monkeys[throw_true].0.push(new),
                     false => monkeys[throw_false].0.push(new),
                 }
             });
-            inspections[m] += monkeys[m].0.len();
+            monkeys[m].5 += monkeys[m].0.len();
             monkeys[m].0.clear();
         });
     });
-    inspections.sort_by(|a, b| b.cmp(a));
-    inspections.iter().take(2).product()
+    monkeys.sort_by(|a, b| b.5.cmp(&a.5));
+    monkeys.iter().map(|m| m.5).take(2).product()
 }
 
 #[aoc(day11, part1)]
-fn part_1(monkeys: &Vec<(Vec<u64>, Operation, u64, usize, usize)>) -> usize {
+fn part_1(monkeys: &Vec<(Vec<u64>, Operation, u64, usize, usize, usize)>) -> usize {
     play(&mut monkeys.clone(), 20, |x| x / 3)
 }
 
 #[aoc(day11, part2)]
-fn part_2(monkeys: &Vec<(Vec<u64>, Operation, u64, usize, usize)>) -> usize {
-    let modulus = monkeys.iter().map(|m| m.2).product::<u64>();
-    play(&mut monkeys.clone(), 10000, |x| x % modulus)
+fn part_2(monkeys: &Vec<(Vec<u64>, Operation, u64, usize, usize, usize)>) -> usize {
+    play(&mut monkeys.clone(), 10000, |x| {
+        x % monkeys.iter().map(|m| m.2).product::<u64>()
+    })
 }
 
 #[cfg(test)]
