@@ -30,6 +30,7 @@ fn parse_monkeys(input: &str) -> Vec<(Vec<u64>, Operation, u64, usize, usize)> {
         })
         .collect()
 }
+
 fn play(
     monkeys: &mut Vec<(Vec<u64>, Operation, u64, usize, usize)>,
     rounds: usize,
@@ -37,7 +38,7 @@ fn play(
 ) -> usize {
     let mut inspections = vec![0; monkeys.len()];
     (0..rounds).for_each(|_| {
-        for m in 0..monkeys.len() {
+        (0..monkeys.len()).for_each(|m| {
             let (items, operation, test, throw_true, throw_false) = monkeys[m].clone();
             items.iter().for_each(|item| {
                 let new = match operation {
@@ -52,10 +53,10 @@ fn play(
             });
             inspections[m] += monkeys[m].0.len();
             monkeys[m].0.clear();
-        }
+        });
     });
     inspections.sort_by(|a, b| b.cmp(a));
-    inspections[0] * inspections[1]
+    inspections.iter().take(2).product()
 }
 
 #[aoc(day11, part1)]
