@@ -42,11 +42,11 @@ impl FromStr for PlayerMove {
 fn input_generator(input: &str) -> Vec<(PlayerMove, PlayerMove)> {
     input
         .lines()
-        .map(|l| l.split(" ").collect::<Vec<&str>>())
-        .map(|s| {
+        .map(|l| l.split(" "))
+        .map(|mut s| {
             (
-                PlayerMove::from_str(s[0]).unwrap(),
-                PlayerMove::from_str(s[1]).unwrap(),
+                PlayerMove::from_str(s.next().unwrap()).unwrap(),
+                PlayerMove::from_str(s.last().unwrap()).unwrap(),
             )
         })
         .collect()
