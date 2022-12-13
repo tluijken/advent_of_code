@@ -1,18 +1,9 @@
 #[aoc_generator(day1)]
 fn get_sorted_weights(input: &str) -> Vec<u32> {
-    let mut result =
-        input
-            .lines()
-            .map(|l| l.trim().parse::<u32>())
-            .fold(vec![0], |mut acc, parsed| {
-                match parsed {
-                    Ok(weight) => *acc.iter_mut().last().unwrap_or(&mut 0) += weight,
-                    _ => {
-                        acc.push(0);
-                    }
-                }
-                acc
-            });
+    let mut result = input
+        .split("\n\n")
+        .map(|b| b.lines().map(|c| c.trim().parse().unwrap_or(0)).sum())
+        .collect::<Vec<u32>>();
     result.sort_by(|a, b| b.cmp(a));
     result
 }

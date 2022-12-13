@@ -8,24 +8,26 @@ enum Operation {
 #[aoc_generator(day11)]
 fn parse_monkeys(input: &str) -> Vec<(Vec<u64>, Operation, u64, usize, usize, usize)> {
     input
-        .split("\n\n")
-        .map(|m| {
-            let lines = m.lines().skip(1).map(|l| l.trim()).collect::<Vec<&str>>();
+        .lines()
+        .map(|l| l.trim())
+        .collect::<Vec<&str>>()
+        .chunks(7)
+        .map(|lines| {
             (
-                lines[0][16..]
+                lines[1][16..]
                     .split(", ")
                     .map(|i| i.parse().unwrap_or(0))
                     .collect(),
-                lines[1][23..]
+                lines[2][23..]
                     .parse()
-                    .map(|n| match lines[1].contains("+") {
+                    .map(|n| match lines[2].contains("+") {
                         true => Operation::Add(n),
                         false => Operation::Multiply(n),
                     })
                     .unwrap_or(Operation::MonkeyDance),
-                lines[2][19..].parse().unwrap_or(0),
-                lines[3][25..].parse().unwrap_or(0),
-                lines[4][26..].parse().unwrap_or(0),
+                lines[3][19..].parse().unwrap_or(0),
+                lines[4][25..].parse().unwrap_or(0),
+                lines[5][26..].parse().unwrap_or(0),
                 0,
             )
         })
