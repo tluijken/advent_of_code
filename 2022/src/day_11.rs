@@ -41,7 +41,7 @@ fn play(
 ) -> usize {
     (0..rounds).for_each(|_| {
         (0..monkeys.len()).for_each(|m| {
-            let (items, operation, test, throw_true, throw_false, _) = monkeys[m].clone();
+            let (items, operation, test, m1, m2, _) = monkeys[m].clone();
             items.iter().for_each(|item| {
                 let new = match operation {
                     Operation::Add(n) => f(item + n),
@@ -49,8 +49,8 @@ fn play(
                     Operation::MonkeyDance => f(item * item),
                 };
                 match new % test == 0 {
-                    true => monkeys[throw_true].0.push(new),
-                    false => monkeys[throw_false].0.push(new),
+                    true => monkeys[m1].0.push(new),
+                    false => monkeys[m2].0.push(new),
                 }
             });
             monkeys[m].5 += monkeys[m].0.len();
