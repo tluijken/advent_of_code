@@ -58,7 +58,7 @@ fn fill_stacks(input: &str, number_of_stacks: usize) -> Vec<Vec<char>> {
         .rev()
         .filter(|l| l.contains("]"))
         .fold(vec![], |mut result, line| {
-            for i in 0..number_of_stacks {
+            (0..number_of_stacks).for_each(|i| {
                 if result.len() <= i {
                     result.push(vec![]);
                 }
@@ -67,7 +67,7 @@ fn fill_stacks(input: &str, number_of_stacks: usize) -> Vec<Vec<char>> {
                         result[i].push(c);
                     }
                 }
-            }
+            });
             result
         })
 }
@@ -77,11 +77,10 @@ fn pick_crates_from_stack(
     stack_number: u8,
     crate_count: u8,
 ) -> Vec<char> {
-    let mut items = vec![];
-    for _ in 0..crate_count {
-        items.push(stacks[stack_number as usize - 1].pop().unwrap());
-    }
-    items
+    (0..crate_count).fold(vec![], |mut acc, _| {
+        acc.push(stacks[stack_number as usize - 1].pop().unwrap());
+        acc
+    })
 }
 
 #[cfg(test)]

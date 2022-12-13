@@ -15,7 +15,7 @@ fn read_tree_map(input: &str) -> Vec<Vec<(u32, bool, u32)>> {
         acc.push(
             l.chars()
                 .map(|c| (c.to_digit(10).unwrap(), false, 0))
-                .collect::<Vec<(u32, bool, u32)>>(),
+                .collect(),
         );
         acc
     })

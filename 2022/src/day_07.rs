@@ -19,13 +19,14 @@ fn get_folder_sizes(input: &str) -> HashMap<String, u32> {
         str
     });
     //sum subfolders
-    folders.iter().fold(HashMap::new(), |mut hm, f| {
-        let sum = folders
-            .keys()
-            .filter(|k| k.starts_with(f.0))
-            .map(|k| folders.get(k).unwrap_or(&0))
-            .sum();
-        hm.entry(f.0.to_owned()).or_insert(sum);
+    folders.iter().fold(HashMap::new(), |mut hm, (folder, _)| {
+        hm.entry(folder.to_owned()).or_insert(
+            folders
+                .keys()
+                .filter(|k| k.starts_with(folder))
+                .map(|k| folders.get(k).unwrap_or(&0))
+                .sum(),
+        );
         hm
     })
 }

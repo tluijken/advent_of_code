@@ -2,24 +2,23 @@
 fn get_teams(input: &str) -> Vec<((u8, u8), (u8, u8))> {
     input
         .lines()
-        .map(|l| l.split(",").collect::<Vec<&str>>())
-        .fold(vec![], |mut teams, pair| {
+        .map(|l| l.split(","))
+        .into_iter()
+        .fold(vec![], |mut teams, mut pair| {
             teams.push((
-                parse_section(pair.first().unwrap()),
+                parse_section(pair.next().unwrap()),
                 parse_section(pair.last().unwrap()),
             ));
             teams
         })
 }
 fn parse_section(pair_item: &str) -> (u8, u8) {
-    let range = pair_item
+    let mut range = pair_item
         .split("-")
-        .collect::<Vec<&str>>()
-        .iter()
-        .map(|r| r.parse::<u8>().unwrap())
-        .collect::<Vec<u8>>();
+        .into_iter()
+        .map(|r| r.parse::<u8>().unwrap_or(0));
     (
-        range.first().unwrap().to_owned(),
+        range.next().unwrap().to_owned(),
         range.last().unwrap().to_owned(),
     )
 }
