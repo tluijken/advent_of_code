@@ -71,10 +71,8 @@ fn calculate_route_costs(
 fn part_2(input: &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
     let cost = calculate_route_costs(input);
     let mut shortest_path = u64::MAX;
-    println!("{:?}", cost);
     for (x, y) in cost.keys() {
         if input.0[*x][*y] == b'a' {
-            println!("{}", shortest_path);
             let path_length = cost.get(&(*x, *y)).unwrap();
             if path_length < &shortest_path {
                 shortest_path = *path_length;
