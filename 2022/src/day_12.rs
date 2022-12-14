@@ -28,7 +28,6 @@ fn get_neighbors((x, y): (usize, usize), height_map: &Vec<Vec<u8>>) -> Vec<(usiz
     vec![(-1i32, 0i32), (1i32, 0i32), (0i32, -1i32), (0i32, 1i32)]
         .iter()
         .map(|(hx, vy)| (x as i32 + hx, y as i32 + vy))
-        .into_iter()
         .filter(|(x, y)| x >= &0 && y >= &0)
         .map(|(x, y)| (x as usize, y as usize))
         .filter(|(x, y)| match height_map.get(*x) {
@@ -37,12 +36,6 @@ fn get_neighbors((x, y): (usize, usize), height_map: &Vec<Vec<u8>>) -> Vec<(usiz
         })
         .filter(|(nx, ny)| height_map[*nx][*ny] as i32 - height_map[x][y] as i32 <= 1)
         .collect()
-}
-
-#[aoc(day12, part1)]
-fn part_1(input: &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
-    let cost = calculate_route_costs(input);
-    cost.get(&input.2).unwrap_or(&0).clone()
 }
 
 fn calculate_route_costs(
@@ -67,18 +60,28 @@ fn calculate_route_costs(
     cost
 }
 
-#[aoc(day12, part2)]
-fn part_2(input: &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
+#[aoc(day12, part1)]
+fn part_1(input: &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
     let cost = calculate_route_costs(input);
+    cost.get(&input.2).unwrap_or(&0).clone()
+}
+
+#[aoc(day12, part2)]
+fn part_2((height_map, _, end): &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
     let mut shortest_path = u64::MAX;
-    for (x, y) in cost.keys() {
-        if input.0[*x][*y] == b'a' {
-            let path_length = cost.get(&(*x, *y)).unwrap();
-            if path_length < &shortest_path {
-                shortest_path = *path_length;
-            }
-        }
-    }
+    height_map.into_iter().enumerate().for_each(|(i, r)| {
+        r.iter()
+            .filter(|c| c.clone() == &b'a')
+            .enumerate()
+            .for_each(|(j, _)| {
+                if i == 0 || j == 0 {
+                    let cost = calculate_route_costs(&(height_map.clone(), (i, j), end.clone()));
+                    if cost.get(end).unwrap_or(&u64::MAX) < &shortest_path {
+                        shortest_path = *cost.get(end).unwrap();
+                    }
+                }
+            })
+    });
     shortest_path
 }
 
