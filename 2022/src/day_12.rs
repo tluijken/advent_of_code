@@ -68,6 +68,7 @@ fn part_1(input: &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
 
 #[aoc(day12, part2)]
 fn part_2((height_map, _, end): &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
+    // there must be a better way for this...but it works.
     let mut shortest_path = u64::MAX;
     height_map.into_iter().enumerate().for_each(|(i, r)| {
         r.iter()
