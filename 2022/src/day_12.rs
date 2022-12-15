@@ -24,7 +24,11 @@ fn get_heightmap(input: &str) -> (Vec<Vec<u8>>, (usize, usize), (usize, usize)) 
     (result, start, end)
 }
 
-fn get_neighbors((x, y): (usize, usize), height_map: &Vec<Vec<u8>>) -> Vec<(usize, usize)> {
+fn get_neighbors(
+    (x, y): (usize, usize),
+    height_map: &Vec<Vec<u8>>,
+    inverse: bool,
+) -> Vec<(usize, usize)> {
     vec![(-1i32, 0i32), (1i32, 0i32), (0i32, -1i32), (0i32, 1i32)]
         .iter()
         .map(|(hx, vy)| (x as i32 + hx, y as i32 + vy))
@@ -34,12 +38,16 @@ fn get_neighbors((x, y): (usize, usize), height_map: &Vec<Vec<u8>>) -> Vec<(usiz
             Some(x) => x.get(*y).is_some(),
             _ => false,
         })
-        .filter(|(nx, ny)| height_map[*nx][*ny] as i32 - height_map[x][y] as i32 <= 1)
+        .filter(|(nx, ny)| match inverse {
+            false => height_map[*nx][*ny] as i32 - height_map[x][y] as i32 <= 1,
+            true => height_map[*nx][*ny] as i32 - height_map[x][y] as i32 >= -1,
+        })
         .collect()
 }
 
 fn calculate_route_costs(
     (heighmap, start, _): &(Vec<Vec<u8>>, (usize, usize), (usize, usize)),
+    inverse: bool,
 ) -> HashMap<(usize, usize), u64> {
     let mut q = vec![start.clone()];
     let mut path: HashMap<(usize, usize), Option<(usize, usize)>> = HashMap::new();
@@ -48,7 +56,7 @@ fn calculate_route_costs(
     cost.insert(start.clone(), 0);
     while !q.is_empty() {
         let curr = q.pop().unwrap();
-        for n in get_neighbors(curr, heighmap) {
+        for n in get_neighbors(curr, heighmap, inverse) {
             let new_cost = cost.get(&curr).unwrap() + 1;
             if cost.get(&n).unwrap_or(&u64::MAX) > &new_cost {
                 cost.insert(n, new_cost);
@@ -62,28 +70,23 @@ fn calculate_route_costs(
 
 #[aoc(day12, part1)]
 fn part_1(input: &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
-    let cost = calculate_route_costs(input);
+    let cost = calculate_route_costs(input, false);
     cost.get(&input.2).unwrap_or(&0).clone()
 }
 
 #[aoc(day12, part2)]
-fn part_2((height_map, _, end): &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
+fn part_2((height_map, start, end): &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
     // there must be a better way for this...but it works.
-    let mut shortest_path = u64::MAX;
-    height_map.into_iter().enumerate().for_each(|(i, r)| {
-        r.iter()
-            .filter(|c| c.clone() == &b'a')
-            .enumerate()
-            .for_each(|(j, _)| {
-                if i == 0 || j == 0 {
-                    let cost = calculate_route_costs(&(height_map.clone(), (i, j), end.clone()));
-                    if cost.get(end).unwrap_or(&u64::MAX) < &shortest_path {
-                        shortest_path = *cost.get(end).unwrap();
-                    }
-                }
-            })
-    });
-    shortest_path
+    let cost = calculate_route_costs(&(height_map.clone(), end.clone(), start.clone()), true);
+    let mut edge_costs: Vec<u64> = cost
+        .into_iter()
+        .filter(|((x, y), _)| {
+            ((x > &0 && y == &0) || (y > &0 && x == &0)) && height_map[*x][*y] == b'a'
+        })
+        .map(|(_, v)| v)
+        .collect();
+    edge_costs.sort();
+    edge_costs.first().unwrap().to_owned()
 }
 
 #[cfg(test)]
