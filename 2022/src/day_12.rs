@@ -76,15 +76,14 @@ fn part_1(input: &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
 
 #[aoc(day12, part2)]
 fn part_2((height_map, start, end): &(Vec<Vec<u8>>, (usize, usize), (usize, usize))) -> u64 {
-    // there must be a better way for this...but it works.
-    let cost = calculate_route_costs(&(height_map.clone(), end.clone(), start.clone()), true);
-    let mut edge_costs: Vec<u64> = cost
-        .into_iter()
-        .filter(|((x, y), _)| {
-            ((x > &0 && y == &0) || (y > &0 && x == &0)) && height_map[*x][*y] == b'a'
-        })
-        .map(|(_, v)| v)
-        .collect();
+    let mut edge_costs =
+        calculate_route_costs(&(height_map.clone(), end.clone(), start.clone()), true)
+            .into_iter()
+            .filter(|((x, y), _)| {
+                ((x > &0 && y == &0) || (y > &0 && x == &0)) && height_map[*x][*y] == b'a'
+            })
+            .map(|(_, v)| v)
+            .collect::<Vec<u64>>();
     edge_costs.sort();
     edge_costs.first().unwrap().to_owned()
 }
