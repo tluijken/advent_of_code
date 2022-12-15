@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -12,7 +13,7 @@ int main() {
   vector<int> v;
   int totalGroupVal = 0;
   while (getline(dataFile, s)) {
-    if (s.empty() || !s.find_first_not_of("0123456789")) {
+    if (s.empty() || !all_of(s.begin(), s.end(), ::isdigit)) {
       v.push_back(totalGroupVal);
       totalGroupVal = 0;
     } else {
