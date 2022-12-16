@@ -50,6 +50,7 @@ int main() {
         } else {
           priority += d - 96;
         }
+        break;
       }
     }
   }
