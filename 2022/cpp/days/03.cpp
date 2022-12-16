@@ -1,12 +1,19 @@
-#include <algorithm>
-#include <cctype>
 #include <fstream>
-#include <functional>
 #include <iostream>
-#include <string.h>
 #include <string>
 #include <vector>
+
 using namespace std;
+
+bool contains(string &input, char &chr) {
+  return input.find(chr) != string::npos;
+}
+
+int getPriotity(char &chr) {
+  int d = (int)chr;
+  d -= d <= 90 ? 38 : 96;
+  return d;
+}
 
 int main() {
   string s;
@@ -19,37 +26,27 @@ int main() {
     lines.push_back(s);
   }
 
-  // Day 1
+  // Part 1
   for (int i = 0; i < lines.size(); i++) {
     string s = lines[i];
     string firstHalf = s.substr(0, s.length() / 2);
     string secondHalf = s.substr(s.length() / 2, s.length());
     for (int i = 0; i < secondHalf.length(); i++) {
-      if (firstHalf.find(secondHalf[i]) != std::string::npos) {
-        int d = (int)secondHalf[i];
-        if (d <= 90) {
-          priority += d - 38;
-        } else {
-          priority += d - 96;
-        }
+      if (contains(firstHalf, secondHalf[i])) {
+        priority += getPriotity(secondHalf[i]);
         break;
       }
     }
   }
   cout << "Day 3 part 1 : " << priority << "\n";
 
-  // Day 2
+  // Part 2
   priority = 0;
   for (int i = 0; i < lines.size(); i += 3) {
     for (int j = 0; j < lines[i].length(); j++) {
-      if (lines[i + 1].find(lines[i][j]) != std::string::npos &&
-          lines[i + 2].find(lines[i][j]) != std::string::npos) {
-        int d = (int)lines[i][j];
-        if (d <= 90) {
-          priority += d - 38;
-        } else {
-          priority += d - 96;
-        }
+      if (contains(lines[i + 1], lines[i][j]) &&
+          contains(lines[i + 2], lines[i][j])) {
+        priority += getPriotity(lines[i][j]);
         break;
       }
     }
