@@ -27,13 +27,12 @@ int main() {
   }
 
   // Part 1
-  for (int i = 0; i < lines.size(); i++) {
-    string s = lines[i];
+  for (string &s : lines) {
     string firstHalf = s.substr(0, s.length() / 2);
     string secondHalf = s.substr(s.length() / 2, s.length());
-    for (int i = 0; i < secondHalf.length(); i++) {
-      if (contains(firstHalf, secondHalf[i])) {
-        priority += getPriotity(secondHalf[i]);
+    for (char &c : secondHalf) {
+      if (contains(firstHalf, c)) {
+        priority += getPriotity(c);
         break;
       }
     }
@@ -43,10 +42,9 @@ int main() {
   // Part 2
   priority = 0;
   for (int i = 0; i < lines.size(); i += 3) {
-    for (int j = 0; j < lines[i].length(); j++) {
-      if (contains(lines[i + 1], lines[i][j]) &&
-          contains(lines[i + 2], lines[i][j])) {
-        priority += getPriotity(lines[i][j]);
+    for (char &c : lines[i]) {
+      if (contains(lines[i + 1], c) && contains(lines[i + 2], c)) {
+        priority += getPriotity(c);
         break;
       }
     }

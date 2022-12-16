@@ -6,19 +6,17 @@ using namespace std;
 
 bool allUniqueChars(string str) {
   for (int i = 0; i < str.length(); i++) {
-    for (int j = i + 1; j < str.length(); j++) {
-      if (str[i] == str[j]) {
+    for (char &c : str.substr(i + 1))
+      if (str[i] == c) {
         return false;
       }
-    }
   }
   return true;
 }
 
 int getDistinctSequence(string &input, int windowSize) {
   for (int i = 0; i < input.length(); i++) {
-    string substr = input.substr(i, windowSize);
-    if (allUniqueChars(substr)) {
+    if (allUniqueChars(input.substr(i, windowSize))) {
       return i + windowSize;
     }
   }
