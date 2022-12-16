@@ -1,88 +1,29 @@
-use std::cmp::Ordering;
-use std::str::FromStr;
-
-const DRAW_SCORE: u32 = 3;
-const WIN_SCORE: u32 = 6;
-
-#[derive(Eq, Debug, PartialOrd, PartialEq, Copy, Clone)]
-enum PlayerMove {
-    Rock = 1,
-    Paper = 2,
-    Scissors = 3,
-}
-
-impl Ord for PlayerMove {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match (self, other) {
-            (PlayerMove::Rock, PlayerMove::Paper)
-            | (PlayerMove::Paper, PlayerMove::Scissors)
-            | (PlayerMove::Scissors, PlayerMove::Rock) => Ordering::Less,
-
-            (PlayerMove::Paper, PlayerMove::Rock)
-            | (PlayerMove::Scissors, PlayerMove::Paper)
-            | (PlayerMove::Rock, PlayerMove::Scissors) => Ordering::Greater,
-            _ => Ordering::Equal,
-        }
-    }
-}
-
-impl FromStr for PlayerMove {
-    type Err = ();
-    fn from_str(input: &str) -> Result<PlayerMove, Self::Err> {
-        match input {
-            "A" | "X" => Ok(PlayerMove::Rock),
-            "B" | "Y" => Ok(PlayerMove::Paper),
-            "C" | "Z" => Ok(PlayerMove::Scissors),
-            _ => Err(()),
-        }
-    }
-}
-
-#[aoc_generator(day2)]
-fn input_generator(input: &str) -> Vec<(PlayerMove, PlayerMove)> {
-    input
-        .lines()
-        .map(|l| l.split(" "))
-        .map(|mut s| {
-            (
-                PlayerMove::from_str(s.next().unwrap()).unwrap(),
-                PlayerMove::from_str(s.last().unwrap()).unwrap(),
-            )
-        })
-        .collect()
-}
-
 #[aoc(day2, part1)]
-fn part_1(input: &[(PlayerMove, PlayerMove)]) -> u32 {
-    input.iter().fold(0, |acc, (opponent_move, player_move)| {
-        match player_move.cmp(&opponent_move) {
-            Ordering::Less => acc + *player_move as u32,
-            Ordering::Equal => acc + DRAW_SCORE + *player_move as u32,
-            Ordering::Greater => acc + WIN_SCORE + *player_move as u32,
-        }
+fn part_1(input: &str) -> u32 {
+    input.lines().fold(0, |mut acc, line| {
+        let delta = (line.as_bytes()[2] as i32 - line.as_bytes()[0] as i32 - 23 + 3) % 3;
+        acc += (line.as_bytes()[2] - b'X'
+            + 1
+            + match delta {
+                1 => 6,
+                0 => 3,
+                _ => 0,
+            }) as u32;
+        acc
     })
 }
 
 #[aoc(day2, part2)]
-fn part_2(input: &[(PlayerMove, PlayerMove)]) -> u32 {
-    input
-        .iter()
-        .fold(0, |acc, (opponent_move, player_move)| match player_move {
-            // Lose
-            PlayerMove::Rock => match opponent_move {
-                PlayerMove::Rock => acc + PlayerMove::Scissors as u32,
-                PlayerMove::Paper => acc + PlayerMove::Rock as u32,
-                PlayerMove::Scissors => acc + PlayerMove::Paper as u32,
-            },
-            // Draw
-            PlayerMove::Paper => acc + DRAW_SCORE + *opponent_move as u32,
-            // Win
-            PlayerMove::Scissors => match opponent_move {
-                PlayerMove::Rock => acc + WIN_SCORE + PlayerMove::Paper as u32,
-                PlayerMove::Paper => acc + WIN_SCORE + PlayerMove::Scissors as u32,
-                PlayerMove::Scissors => acc + WIN_SCORE + PlayerMove::Rock as u32,
-            },
-        })
+fn part_2(input: &str) -> i32 {
+    input.lines().fold(0, |mut acc, line| {
+        acc += match line.as_bytes()[2] {
+            b'X' => (line.as_bytes()[0] as i32 - b'A' as i32 - 1 + 3) % 3 + 1,
+            b'Y' => 3 + line.as_bytes()[0] as i32 - b'A' as i32 + 1,
+            _ => 6 + (line.as_bytes()[0] as i32 - b'A' as i32 + 1) % 3 + 1,
+        };
+
+        acc
+    })
 }
 
 #[cfg(test)]
@@ -94,10 +35,10 @@ C Z";
 
     #[test]
     fn test_part_1() {
-        assert_eq!(15, part_1(&input_generator(INPUT)));
+        assert_eq!(15, part_1(INPUT));
     }
     #[test]
     fn test_part_2() {
-        assert_eq!(12, part_2(&input_generator(INPUT)));
+        assert_eq!(12, part_2(INPUT));
     }
 }
