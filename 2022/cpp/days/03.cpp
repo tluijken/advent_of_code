@@ -29,7 +29,7 @@ int main() {
   // Part 1
   for (string &s : lines) {
     string firstHalf = s.substr(0, s.length() / 2);
-    string secondHalf = s.substr(s.length() / 2, s.length());
+    string secondHalf = s.substr(s.length() / 2);
     for (char &c : secondHalf) {
       if (contains(firstHalf, c)) {
         priority += getPriotity(c);
