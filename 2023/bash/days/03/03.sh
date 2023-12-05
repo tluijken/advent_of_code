@@ -2,6 +2,7 @@
 declare -A matrix
 l=0;
 c=0;
+symbol_regex='[^.0-9]'
 while read -r line; do
     for (( i=0; i<${#line}; i++ )); do
         char=${line:$i:1}
@@ -11,41 +12,36 @@ while read -r line; do
     ((l++))
 done < input
 
+is_adjacent_to_symbol() {
+    local i=$1
+    local j=$2
+    if [[ ${matrix[$((i-1)),$((j-1))]} =~ $symbol_regex ]] || 
+        [[ ${matrix[$((i-1)),$j]} =~ $symbol_regex ]] ||
+        [[ ${matrix[$((i-1)),$((j+1))]} =~ $symbol_regex ]] ||
+        [[ ${matrix[$i,$((j-1))]} =~ $symbol_regex ]] ||
+        [[ ${matrix[$i,$((j+1))]} =~ $symbol_regex ]] ||
+        [[ ${matrix[$((i+1)),$((j-1))]} =~ $symbol_regex ]] ||
+        [[ ${matrix[$((i+1)),$j]} =~ $symbol_regex ]] ||
+        [[ ${matrix[$((i+1)),$((j+1))]} =~ $symbol_regex ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 sum=0
 for (( i=0; i<l; i++ )); do
     for (( j=0; j<c; j++ )); do
         if [[ ${matrix[$i,$j]} =~ ^[0-9]+$ ]]; then
             adjentToSymbol=false
             num=${matrix[$i,$j]}
-            # check if number has neighbours that are any symbol (non alpha, non numeric) except a dot, even diagonally
-            if [[ ${matrix[$((i-1)),$((j-1))]} =~ [^.0-9] ]] || 
-                [[ ${matrix[$((i-1)),$j]} =~ [^.0-9] ]] ||
-                [[ ${matrix[$((i-1)),$((j+1))]} =~ [^.0-9] ]] ||
-                [[ ${matrix[$i,$((j-1))]} =~ [^.0-9] ]] ||
-                [[ ${matrix[$i,$((j+1))]} =~ [^.0-9] ]] ||
-                [[ ${matrix[$((i+1)),$((j-1))]} =~ [^.0-9] ]] ||
-                [[ ${matrix[$((i+1)),$j]} =~ [^.0-9] ]] ||
-                [[ ${matrix[$((i+1)),$((j+1))]} =~ [^.0-9] ]]; then
-                adjentToSymbol=true
-            fi
-
+            is_adjacent_to_symbol "$i" "$j" && adjentToSymbol=true
             while [[ ${matrix[$i,$((j+1))]} =~ ^[0-9]+$ ]]; do
                 num=$num${matrix[$i,$((j+1))]}
                 ((j++))
-                if [[ ${matrix[$((i-1)),$((j-1))]} =~ [^.0-9] ]] || 
-                    [[ ${matrix[$((i-1)),$j]} =~ [^.0-9] ]] ||
-                    [[ ${matrix[$((i-1)),$((j+1))]} =~ [^.0-9] ]] ||
-                    [[ ${matrix[$i,$((j-1))]} =~ [^.0-9] ]] ||
-                    [[ ${matrix[$i,$((j+1))]} =~ [^.0-9] ]] ||
-                    [[ ${matrix[$((i+1)),$((j-1))]} =~ [^.0-9] ]] ||
-                    [[ ${matrix[$((i+1)),$j]} =~ [^.0-9] ]] ||
-                    [[ ${matrix[$((i+1)),$((j+1))]} =~ [^.0-9] ]] then
-                    adjentToSymbol=true
-                fi
+                is_adjacent_to_symbol "$i" "$j" && adjentToSymbol=true
             done
-            if [[ $adjentToSymbol == true ]]; then
-                ((sum+=$num))
-            fi
+            [[ $adjentToSymbol == true ]] && ((sum+=$num))
         fi
     done
 done
