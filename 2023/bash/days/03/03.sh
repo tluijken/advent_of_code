@@ -6,6 +6,7 @@ c=0;
 sum=0
 gearsTotal=0
 symbol_regex='[^.0-9]'
+positions=(-1,-1 -1,0 -1,1 0,-1 0,1 1,-1 1,0 1,1)
 
 while read -r line; do
     for (( i=0; i<${#line}; i++ )); do
@@ -19,45 +20,27 @@ done < input
 is_adjacent_to_symbol() {
     local i=$1
     local j=$2
-    if [[ ${matrix[$((i-1)),$((j-1))]} =~ $symbol_regex ]] || 
-        [[ ${matrix[$((i-1)),$j]} =~ $symbol_regex ]] ||
-        [[ ${matrix[$((i-1)),$((j+1))]} =~ $symbol_regex ]] ||
-        [[ ${matrix[$i,$((j-1))]} =~ $symbol_regex ]] ||
-        [[ ${matrix[$i,$((j+1))]} =~ $symbol_regex ]] ||
-        [[ ${matrix[$((i+1)),$((j-1))]} =~ $symbol_regex ]] ||
-        [[ ${matrix[$((i+1)),$j]} =~ $symbol_regex ]] ||
-        [[ ${matrix[$((i+1)),$((j+1))]} =~ $symbol_regex ]]; then
-        return 0
-    else
-        return 1
-    fi
+    for (( k=0; k<${#positions[@]}; k++ )); do
+        pos=(${positions[$k]})
+        if [[ ${matrix[$((i+pos[0])),$((j+pos[1]))]} =~ $symbol_regex ]]; then
+            return 0
+        fi
+    done
+    return 1
 }
 
 is_adjacent_to_asterix() {
     local i=$1
     local j=$2
-    
-    if [[ ${matrix[$((i-1)),$((j-1))]} == "*" ]]; then
-         echo "$((i-1)),$((j-1))"
-    elif [[ ${matrix[$((i-1)),$j]} == "*" ]]; then
-        echo "$((i-1)),$j"
-    elif [[ ${matrix[$((i-1)),$((j+1))]} == "*" ]]; then
-        echo "$((i-1)),$((j+1))"
-    elif [[ ${matrix[$i,$((j-1))]} == "*" ]]; then
-        echo "$i,$((j-1))"
-    elif [[ ${matrix[$i,$((j+1))]} == "*" ]]; then
-        echo "$i,$((j+1))"
-    elif [[ ${matrix[$((i+1)),$((j-1))]} == "*" ]]; then
-        echo "$((i+1)),$((j-1))"
-    elif [[ ${matrix[$((i+1)),$j]} == "*" ]]; then
-        echo "$((i+1)),$j"
-    elif [[ ${matrix[$((i+1)),$((j+1))]} == "*" ]]; then
-        echo "$((i+1)),$((j+1))"
-    else
-        echo 0
-    fi
+    for (( k=0; k<${#positions[@]}; k++ )); do
+        IFS=',' read -ra pos <<< "${positions[$k]}"
+        if [[ ${matrix[$((i+pos[0])),$((j+pos[1]))]} == "*" ]]; then
+            echo "$((i+pos[0])),$((j+pos[1]))"
+            return 0
+        fi
+    done
+    echo 0
 }
-
 
 for (( i=0; i<l; i++ )); do
     for (( j=0; j<c; j++ )); do
