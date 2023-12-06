@@ -12,18 +12,16 @@ while read -r line; do
     IFS='|' read -ra nsplit <<< "$n"
     IFS=' ' read -ra wn <<< "${nsplit[0]}"
     IFS=' ' read -ra mn <<< "${nsplit[1]}"
-    for ((c=0; c <= $copies; c++)); do
-        matchCount=0
-        for i in "${wn[@]}"; do
-            for j in "${mn[@]}"; do
-                [[ $i == $j ]] && ((matchCount++))
-            done
+    matchcount=0
+    for i in "${wn[@]}"; do
+        for j in "${mn[@]}"; do
+            [[ $i == $j ]] && ((matchcount++))
         done
-        [[ $matchCount == 0 ]] && continue
-        [[ $c == 0 ]] && sum=$((sum + (2 ** (matchCount - 1))))
-        for ((i = cid + 1; i <= matchCount + cid; i++)); do
-            m[$i]=$((m[$i] + 1))
-        done
+    done
+    [[ $matchcount == 0 ]] && continue
+    sum=$((sum + (2 ** (matchcount - 1))))
+    for ((i = cid + 1; i <= matchcount + cid; i++)); do
+        m[$i]=$((m[$i] + 1 + copies))
     done
 done < $1
 echo $sum
