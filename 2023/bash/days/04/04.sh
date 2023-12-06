@@ -1,7 +1,6 @@
 #!/bin/bash
-sum=0
 declare -A m
-cid=0;
+cid=0;sum=0
 while read -r line; do
     ((cid++))
     copies=${m[$cid]:-0}
